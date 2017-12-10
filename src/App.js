@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+// import candle from './candle-icon.';
 
 class App extends Component {
   render() {
@@ -17,39 +18,102 @@ class App extends Component {
   }
 }
 
-class Birthday extends Component {
+class Moon extends Component {
+  render() {
+    return (
+      // <div className="wrapper">
+        <img className="moon" src={require('./moon.png')} />
+      // </div>
+      )
+  }
+}
+
+class Person extends Component {
   render() {
     return (
       <div className="wrapper">
-  <div className="flame"></div>
+  <div className="head"></div>
       
       </div>
     )
   }
 }
-    // <div className="candle">
-       
-        // <div className="wick"></div>
-        // <div className="flame"></div>
-        // </div>
 
-// Creates Each Visual Time Length
-class TextBox extends Component {
+class Candle extends Component {
   render() {
     return (
+      // <div className="wrapper">
+        <img className="candle" src={require('./candle-icon.png')} />
+      // </div>
+      )
+  }
+}
+// Creates Each Visual Time Length
+class TextBox extends Component {
+
+  unitCheck() {
+    return this.props.age*this.props.data.length;
+  }
+
+  pluralCheck(text){
+    const t = text;
+    if(this.props.age*this.props.data.length > 1) {
+      return t + 's'
+    }
+    return t;
+  }
+
+  render() {
+    if(this.props.text) {
+      return (
         <div className={this.props.display}>
-          <p>You've lived and celebrated {this.props.age} <strong>AMAZING</strong> years!</p>
+            <p>{this.props.text}</p>
+        </div>
+        )
+    }
+    if(this.props.age < 1){
+      return (
+        <div className={this.props.display}>
+          <p>Welcome to this beautiful world. You're still new and you haven't experienced much. You lived and experienced {this.unitCheck().toFixed(2)} <strong>AMAZING</strong> and probably <strong>CONFUSING</strong> {this.pluralCheck(this.props.data.type)}!</p>
+        </div>
+      )    
+    }
+      return (
+        <div className={this.props.display}>
+          <p>You've lived and celebrated {this.unitCheck()} <strong>AMAZING</strong> {this.pluralCheck(this.props.data.type)}!</p>
         </div>
       )
+    
   }
   
 }
+// <p>You've lived and celebrated {this.props.data.age} <strong>AMAZING</strong> {this.props.data}!</p>
 
 class Square extends Component {
   render() {
+    const animal = this.props.image;
+    if(animal){
+      if(animal === 'chicken'){
+        return (
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./chicken.png')} />
+        )
+      }
+      if(animal === 'pig') {
+        return (
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./pig.png')} />
+        )
+      }
+      if(animal === 'cow') {
+        return (
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./cow.png')} />
+        )
+      }
+      
+    }
+    
     return (
-      <div id={this.props.id} onClick={this.props.modal} className={this.props.lived} >{this.props.id + 1}</div>
-    )
+        <div id={this.props.id} onClick={this.props.modal} className={this.props.lived} > {this.props.id + 1}</div>
+      )
   }
 };
 
@@ -65,7 +129,9 @@ class ModalContent extends Component {
       )
   }
 }
-
+// 59 lbs of beef per person per year - cow avg weight is 1400 lbs
+//  60 lbs of chicken per person per year - chicken avg weight is 2 lbs
+// 41 lbs of pork per person per year - 144 lbs of meat from one pig
 class Application extends Component {
   constructor(props){
     super(props);
@@ -105,9 +171,15 @@ class Application extends Component {
         if(isNaN(Number(age))) {
             alert(this.refs.age.value + "is not a number. Please enter a number value");
         } else {
+          if(this.state.unit.type === 'month'){
+            this.setState({age: Number(this.refs.age.value/this.state.unit.length) }, function() {
+              console.log(this.state.age)})
+          } else {
             this.setState({age: Number(this.refs.age.value) }, function() {
-            console.log(this.state.age)
-          })
+              console.log(this.state.age)
+            })
+          }
+          this.refs.age.value = "";
         }       
       }
 
@@ -167,9 +239,13 @@ class Application extends Component {
     })
   }
 
-  // pluralize(unitType) {
-  //   unitType + 's'
-  // }
+  // Decides which icon to use
+  unitTypeHandler(unit) {
+    if(unit === 'month') {
+      return <Moon />;
+    }
+    return <Candle />
+  }
 
 // MODAL ON/OFF on click
   updateModal(e) {
@@ -205,15 +281,62 @@ class Application extends Component {
     }
   }
 
+  // animal functions
+  animalCalc(animal, age){
+    var cnt, mass;
+    if(animal === 'chicken') {
+      mass = age*41;
+      cnt = (mass/2).toFixed(2);
+    }
+    if(animal === 'pig') {
+      mass = age*60;
+      cnt = (mass/144).toFixed(2);;
+    }
+    if(animal === 'cow') {
+      mass = age*59;
+      cnt = (mass/1400).toFixed(4);
+    }
+    return [mass, cnt];
+  }
 // RENDERS ALL UNITS AND THEIR STATUS
   eachSQR() {
     var sqr = [];
-    var filled = this.state.unit.type + 'Fill';
+    var age = this.state.age
+    
+    var animal = "cow";
+
+    var numofChickens  = this.animalCalc('chicken', age);
+    var numofPigs = this.animalCalc('pig', age);
+    var numofCows = this.animalCalc('cow', age);
+    var text = "You've eaten " + numofChickens[0] + " lbs of chicken, " + numofPigs[0] + " lbs of pork, and " + numofCows[0] + "lbs of beef. To put this in perspective, you've eaten " + numofChickens[1] + " chickens, " + numofPigs[1] + " pigs, and " + numofCows[1] + " cows! Holy " + animal.toUpperCase() +"!";
     var unfilled = this.state.unit.type;
-    sqr.push(<TextBox display={this.state.age > 0 ? 'contextOn':'contextOff'} age={this.state.age}/>)
+    sqr.push(<TextBox display={this.state.age > 0 ? 'contextOn':'contextOff'} age={this.state.age} data={this.state.unit} text={text}/>)
+    // if(this.state.age) {
+    //   for(var i = 0; i < Math.floor(numofChickens); i++) {
+    //     sqr.push(<Square key={i} id={i} image="chicken" modal={this.updateModal.bind(this)}/>)
+    //   }
+    // }
+    // return sqr
+    var numOfAnimals;
+    // if(animal)
+    for(var i = 0; i < Math.floor(numofCows[1]); i++) {
+      if(i < Math.floor(numofCows[1])){
+        sqr.push(<Square key={i} id={i} lived={unfilled} image={animal} modal={this.updateModal.bind(this)}/>)
+      } else {
+         // sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
+      }
+    }
+    return sqr
+  }
+
+  eachBday() {
+    var sqr = [];
+    var obj = this.unitTypeHandler(this.state.unit.type);
+    var unfilled = this.state.unit.type;
+    sqr.push(<TextBox display={this.state.age > 0 ? 'contextOn':'contextOff'} age={this.state.age} data={this.state.unit} plural={this.pluralize}/>)
     for(var i = 0; i < this.state.avglife*this.state.unit.length; i++) {
       if(i < this.state.age*this.state.unit.length){
-        sqr.push(<Square key={i} id={i} lived={filled} modal={this.updateModal.bind(this)}/>)
+        sqr.push(obj)
       } else {
         // sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
       }
@@ -221,18 +344,24 @@ class Application extends Component {
     return sqr
   }
   
-  eachPresident() {
+  eachPerson() {
     var sqr = [];
+    var pplMetYear = 3*365;
+
+    var strText = "You have probably met and impacted " + Math.floor(pplMetYear/this.state.unit.length) + " people every " + this.state.unit.type + " you've lived. That comes to " + pplMetYear*this.state.age + " people so far in your life without realizing it. Each icon represents 10 people";
     var filled = this.state.unit.type + 'Fill';
     var unfilled = this.state.unit.type;
-    sqr.push(<TextBox text="If you live in the U.S., you've witness" display={this.state.age > 0 ? 'contextOn':'contextOff'} age={Math.floor(this.state.age/4)}/>)
-    for(var i = 0; i < Math.floor((this.state.avglife*this.state.unit.length)/4); i++) {
-      if(i < Math.floor(this.state.age*this.state.unit.length/4)){
-        sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
-      } else {
+    sqr.push(<TextBox text={strText} display={this.state.age > 0 ? 'contextOn':'contextOff'} age={Math.floor(this.state.age)} data={this.state.unit} plural={this.pluralize}/>)
+     
+     if(this.state.age){
+    for(var i = 0; i < Math.round(pplMetYear/this.state.unit.length)/10; i++) {
+        sqr.push(<Square key={i.toString()} id={i} lived={unfilled} modal={this.updateModal.bind(this)} />)
+      } 
+      // else {
         // sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
-      }
+      // }
     }
+
     return sqr
   }
 
@@ -243,46 +372,42 @@ class Application extends Component {
         <select onChange={this.getUnit.bind(this)} ref="unit">
           <option value="year 1">Year</option>
           <option value="month 12">Month</option>
-          <option value="week 52">Week</option>
-          <option value="day 365">Day</option>
+
         </select>
         <h1>A Picture of Your Life: One Accomplishment at a Time</h1>
        
        
          <div className={this.state.modal?'modalOn':'modalOff'} onClick={this.updateModal.bind(this)}>
-          <ModalContent data={this.state.data.years} onHandleEnter={this._handleKeyPress.bind(this)} onContent={this.onChangeValue.bind(this)} unitType={this.state.unit} />
+          <ModalContent data={this.state.data.years} onHandleEnter={this._handleKeyPress.bind(this)} onContent={this.onChangeValue.bind(this)} unitType={this.state.unit} />c
          </div>
            
         
         <div id="outerPortrait">
           <div id="innerPortrait">
-            <div>
+            <div className="chart">
+              {this.eachBday()}
+            </div>
+ 
+            <br />
+  
+            <div  className="chart">
+            {this.eachPerson()}
+            </div>
+        
+            <br />
+
+            <div  className="chart">
             {this.eachSQR()}
             </div>
-            <br/>
-            <br/>
 
-            <div>
-            {this.eachPresident()}
-            </div>
-            <br/>
-            <br/>
-
-            <div>
-            {this.eachSQR()}
-            </div>
-            <br/>
-            <br/>
-
+            <br />
           </div>
         </div>
-        <Birthday />
+    
       </div>
     )
   }
 } 
-//  // <Modal display={this.state.modal?'modalOn':'modalOff'} onModal={this.updateModal.bind(this)}
- //  onModalInput={this._handleKeyPress} unitType={this.state.unit}>
-// </Modal>
+
 
 export default App;
