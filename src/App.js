@@ -9,7 +9,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">Powered by React</h1>
         </header>
         
         <Application />
@@ -22,7 +22,7 @@ class Moon extends Component {
   render() {
     return (
       // <div className="wrapper">
-        <img className="moon" src={require('./moon.png')} />
+        <img className="moon" src={require('./moon.png')} alt="moon" />
       // </div>
       )
   }
@@ -31,10 +31,7 @@ class Moon extends Component {
 class Person extends Component {
   render() {
     return (
-      <div className="wrapper">
-  <div className="head"></div>
-      
-      </div>
+      <img className="candle" src={require('./people.png')} alt="person"/>
     )
   }
 }
@@ -43,7 +40,7 @@ class Candle extends Component {
   render() {
     return (
       // <div className="wrapper">
-        <img className="candle" src={require('./candle-icon.png')} />
+        <img className="candle" src={require('./candle-icon.png')} alt="candle"/>
       // </div>
       )
   }
@@ -95,22 +92,20 @@ class Square extends Component {
     if(animal){
       if(animal === 'chicken'){
         return (
-          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./chicken.png')} />
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./chicken.png')} alt="chicken" />
         )
       }
       if(animal === 'pig') {
         return (
-          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./pig.png')} />
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./pig.png')} alt="pig"/>
         )
       }
       if(animal === 'cow') {
         return (
-          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./cow.png')} />
+          <img id={this.props.id} onClick={this.props.modal} className="candle" src={require('./cow.png')} alt="cow"/>
         )
       }
-      
     }
-    
     return (
         <div id={this.props.id} onClick={this.props.modal} className={this.props.lived} > {this.props.id + 1}</div>
       )
@@ -145,7 +140,8 @@ class Application extends Component {
         _content: '',
             },
       avglife: 78,
-      modal: false
+      modal: false,
+      animal: 'chicken',
          }
   }
 
@@ -165,19 +161,15 @@ class Application extends Component {
         console.log("_handleKeyPress Error")
         return;
       }
-      console.log(this.refs)
       if(this.refs.age){
         var age = this.refs.age.value;
         if(isNaN(Number(age))) {
             alert(this.refs.age.value + "is not a number. Please enter a number value");
         } else {
           if(this.state.unit.type === 'month'){
-            this.setState({age: Number(this.refs.age.value/this.state.unit.length) }, function() {
-              console.log(this.state.age)})
+            this.setState({age: Number(this.refs.age.value/this.state.unit.length) })
           } else {
-            this.setState({age: Number(this.refs.age.value) }, function() {
-              console.log(this.state.age)
-            })
+            this.setState({age: Number(this.refs.age.value) })
           }
           this.refs.age.value = "";
         }       
@@ -186,7 +178,6 @@ class Application extends Component {
       // && this.refs.modalInput.id === 'modalInput'
       if(this.state.data) {
         // get modal input data
-        console.log("check",this.state.data);
         var arr = this.state.data;
         var modalID = this.state.unit._id;
         var content = this.state.unit._content;
@@ -219,24 +210,27 @@ class Application extends Component {
         id = this.state.unit._id,
         content = e.target.value;
     var obj = {type: type, length: length, _id: id, _content: content}
-    this.setState({unit: obj}, function(){
-      console.log(this)
-    })
+    this.setState({unit: obj})
   }
 
   
   // GET USER INPUT
   getUnit() {
-    var str = this.refs.unit.value;
-    str = str.split(" ");
+    var str;
+    if(this.refs.unit) {
+      str = this.refs.unit.value;
+      str = str.split(" ");
       this.setState({
         unit: {
           type: str[0],
           length: Number(str[1]),  
         }
-    }, function(){
-      console.log(this.state.unit.type, this.state.unit.length)
-    })
+      })
+    }
+    if(this.refs.animaloption){
+      str = this.refs.animaloption.value;
+      this.setState({animal: str})
+    }
   }
 
   // Decides which icon to use
@@ -258,14 +252,10 @@ class Application extends Component {
 
     // MAIN AGE INPUT
     if(this.state.modal){
-      console.log("more",this)
       curr = {type: this.state.unit.type, length: this.state.unit.length, _id: this.state.unit._id, _content: ''};
       this.setState({
         modal: false,
         unit: curr,
-
-      }, function() {
-        console.log(this.state)
       })
 
       // CONTENT INPUT
@@ -274,10 +264,7 @@ class Application extends Component {
       this.setState({
         modal: true,
         unit: curr,
-      }, function() {
-        console.log(this.state)
       })
-      // this.setState({modal: true})
     }
   }
 
@@ -302,25 +289,20 @@ class Application extends Component {
   eachSQR() {
     var sqr = [];
     var age = this.state.age
-    
-    var animal = "cow";
-
+    var animal = this.state.animal;
     var numofChickens  = this.animalCalc('chicken', age);
     var numofPigs = this.animalCalc('pig', age);
     var numofCows = this.animalCalc('cow', age);
-    var text = "You've eaten " + numofChickens[0] + " lbs of chicken, " + numofPigs[0] + " lbs of pork, and " + numofCows[0] + "lbs of beef. To put this in perspective, you've eaten " + numofChickens[1] + " chickens, " + numofPigs[1] + " pigs, and " + numofCows[1] + " cows! Holy " + animal.toUpperCase() +"!";
     var unfilled = this.state.unit.type;
+    var text = "If you live in the U.S., you've probably eaten " + numofChickens[0] + " lbs of chicken, " + numofPigs[0] + " lbs of pork, and " + numofCows[0] + "lbs of beef. To put this in perspective, you've eaten " + numofChickens[1] + " chickens, " + numofPigs[1] + " pigs, and " + numofCows[1] + " cows! Holy " + animal.toUpperCase() +"!";
+
     sqr.push(<TextBox display={this.state.age > 0 ? 'contextOn':'contextOff'} age={this.state.age} data={this.state.unit} text={text}/>)
-    // if(this.state.age) {
-    //   for(var i = 0; i < Math.floor(numofChickens); i++) {
-    //     sqr.push(<Square key={i} id={i} image="chicken" modal={this.updateModal.bind(this)}/>)
-    //   }
-    // }
-    // return sqr
-    var numOfAnimals;
-    // if(animal)
-    for(var i = 0; i < Math.floor(numofCows[1]); i++) {
-      if(i < Math.floor(numofCows[1])){
+    sqr.push(<select ref="animaloption" className={this.state.age > 0 ? 'contextOn':'contextOff'} onChange={this.getUnit.bind(this)}><option value="chicken">chicken</option><option value="pig">pig</option><option value="cow">cow</option></select> )
+
+    var numOfAnimals = this.animalCalc(animal, age);
+
+    for(var i = 0; i < Math.floor(numOfAnimals[1]); i++) {
+      if(i < Math.floor(numOfAnimals[1])){
         sqr.push(<Square key={i} id={i} lived={unfilled} image={animal} modal={this.updateModal.bind(this)}/>)
       } else {
          // sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
@@ -352,10 +334,11 @@ class Application extends Component {
     var filled = this.state.unit.type + 'Fill';
     var unfilled = this.state.unit.type;
     sqr.push(<TextBox text={strText} display={this.state.age > 0 ? 'contextOn':'contextOff'} age={Math.floor(this.state.age)} data={this.state.unit} plural={this.pluralize}/>)
+
      
-     if(this.state.age){
+     if(this.state.age > 0){
     for(var i = 0; i < Math.round(pplMetYear/this.state.unit.length)/10; i++) {
-        sqr.push(<Square key={i.toString()} id={i} lived={unfilled} modal={this.updateModal.bind(this)} />)
+        sqr.push(<Person key={i.toString()} id={i} lived={unfilled} modal={this.updateModal.bind(this)} />)
       } 
       // else {
         // sqr.push(<Square key={i} id={i} lived={unfilled} modal={this.updateModal.bind(this)}/>)
@@ -372,35 +355,53 @@ class Application extends Component {
         <select onChange={this.getUnit.bind(this)} ref="unit">
           <option value="year 1">Year</option>
           <option value="month 12">Month</option>
-
         </select>
         <h1>A Picture of Your Life: One Accomplishment at a Time</h1>
        
        
          <div className={this.state.modal?'modalOn':'modalOff'} onClick={this.updateModal.bind(this)}>
-          <ModalContent data={this.state.data.years} onHandleEnter={this._handleKeyPress.bind(this)} onContent={this.onChangeValue.bind(this)} unitType={this.state.unit} />c
+          <ModalContent data={this.state.animal} onHandleEnter={this._handleKeyPress.bind(this)} onContent={this.onChangeValue.bind(this)} unitType={this.state.unit} />c
          </div>
            
         
         <div id="outerPortrait">
           <div id="innerPortrait">
-            <div className="chart">
-              {this.eachBday()}
-            </div>
+            <div className="inner">
+              <div className="chart">
+                <div className="inner">
+                  {this.eachBday()}
+                </div>
+              </div>
+            
  
-            <br />
-  
-            <div  className="chart">
-            {this.eachPerson()}
-            </div>
-        
-            <br />
+              <br />
+    
+              <div  className="chart">
+              {this.eachPerson()}
+              </div>
+          
+              <br />
 
-            <div  className="chart">
-            {this.eachSQR()}
-            </div>
-
-            <br />
+              <div  className="chart">
+              {this.eachSQR()}
+              </div>
+              
+              <br />
+              <div  className={this.state.age > 0 ? 'contextOff':'contextOn'}>
+                <p>Ever feel like you're stuck in a box? You're just moving from one frame to another and not sure where you're heading.</p>
+                <img className="" src={require('./jack.png')} alt="jack" />
+                <p>Time to get some perspective. Enter your age above.</p>
+                <img className="" src={require('./jackinthebox.png')} alt="jackinthebox" />
+                
+         
+              </div>
+              <div  className={this.state.age > 0 ? 'contextOn':'contextOff'}>
+                <p>Want to see more? Don't agree with these numbers? Tell us more about yourself and we'll visualize your life, one accomplishment at a time.</p>
+                <a href="#"><button>Click Here</button></a>
+              </div>
+              <br />
+            
+          </div>
           </div>
         </div>
     

@@ -55,7 +55,14 @@ body {
   position: relative;
   border-radius: 5px;
   margin: 0 auto;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.inner{
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    /*padding-right: 15px;*/
 }
 
 .contextOn {
@@ -76,9 +83,6 @@ body {
 
 .chart {
   margin-bottom: 10px;
-  /*display: block;*/
-  /*float: left;*/
-  border: 1px solid red;
   overflow: auto;
 }
 .candle {
@@ -100,7 +104,7 @@ body {
 .square {
   border: 1px solid black;
   width: 10px;
-  height: 10px;
+  height: 10px
 }
 
 .year {
