@@ -2,7 +2,7 @@
   "name": "lifev2",
   "version": "0.2.0",
   "private": true,
-  "homepage": "https://quangthuyhoang.github.io/life-span",
+  "homepage": "https://quangthuyhoang.github.io/lifespan",
   "dependencies": {
     "gh-pages": "^1.1.0",
     "react": "^16.2.0",
