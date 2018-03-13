@@ -346,3 +346,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#signature {
+  margin-top: 20px;
+}

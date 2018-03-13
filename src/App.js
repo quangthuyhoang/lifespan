@@ -399,7 +399,7 @@ class Application extends Component {
           </div>
           </div>
         </div>
-    
+        <div id="signature" >Created by: <span className="red">Quang-Thuy Hoang</span></div>
       </div>
     )
   }
